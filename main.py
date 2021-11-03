@@ -32,6 +32,12 @@ class User(BaseUser):
   );
   birth_date: Optional[date] = Field(default=None);
 
+class UserRegister(User):
+  password: str = Field(
+    ...,
+    min_length=8,
+    max_length=70
+  );
 
 class Tweet(BaseModel):
   tweet_id: UUID = Field(...);
@@ -54,10 +60,24 @@ class Tweet(BaseModel):
   response_model=User,
   status_code=status.HTTP_201_CREATED,
   summary="SignUp User",
-  description="For register a users",
+  description="For register a user",
   tags=["Users"]
 )
 def signup():
+  """
+    # SignUp
+    This path operation REGISTER a user in the app.
+
+    ## Parameters:
+      - Request body parameter
+        - **user**: UserRegister
+
+    Returns a json with the basic user information
+      - user_id: UUID
+      - email: EmailStr
+      - full_name: str
+      - birth_date: str
+  """
   pass;
 
 ### Login a user
