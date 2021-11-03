@@ -109,11 +109,26 @@ def login():
   response_model=List[User],
   status_code=status.HTTP_200_OK,
   summary="Get ALL User",
-  description="Get all users",
   tags=["Users"]
 )
 def get_all_users():
-  pass;
+  """
+    # GetAll users
+    Get All users
+
+    ## Parameters:
+      -
+
+    Returns a json list with all users int he, with the following KEYS:
+      - user_id: UUID
+      - email: EmailStr
+      - full_name: str
+      - birth_date: str
+  """
+  
+  with open("users.json", "r+", encoding="utf-8") as file: # leer y escribir r+
+    users = json.loads(file.read());
+    return users;
 
 ### Get One user
 @app.get(
