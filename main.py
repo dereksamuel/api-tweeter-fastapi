@@ -8,7 +8,7 @@ import json;
 from pydantic import BaseModel, EmailStr, Field;
 
 # FastAPI
-from fastapi import FastAPI, status, Body;
+from fastapi import FastAPI, status, Body, Path;
 
 app = FastAPI();
 
@@ -174,11 +174,27 @@ def delete_one_user():
   response_model=List[Tweet],
   status_code=status.HTTP_200_OK,
   summary="Get ALL Tweets",
-  description="Get all tweets",
   tags=["Tweets"]
 )
 def home():
-  pass;
+  """
+    # GetAll tweets
+    Get All tweets
+
+    ## Parameters:
+      -
+
+    Returns a json list with all tweets int the, with the following KEYS:
+      - tweet_id: UUID
+      - message: str
+      - created_at: datetime
+      - updated_at: Optional[datetime]
+      - by: User
+  """
+  
+  with open("tweets.json", "r+", encoding="utf-8") as file: # leer y escribir r+
+    tweets = json.loads(file.read());
+    return tweets;
 
 ### Post a user
 @app.post(
@@ -229,20 +245,75 @@ def post(tweet: Tweet = Body(...)):
   description="Get one tweet",
   tags=["Tweets"]
 )
-def get_one_tweet():
-  pass;
+def get_one_tweet(
+  tweet_id: str = Path(
+    ...,
+    example="3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  )
+):
+  """
+    # GetAll tweets
+    Get All tweets
+
+    ## Parameters:
+      - **tweet_id**: UUID
+
+    Returns a json list with all tweets int the, with the following KEYS:
+      - tweet_id: UUID
+      - message: str
+      - created_at: datetime
+      - updated_at: Optional[datetime]
+      - by: User
+  """
+  
+  with open("tweets.json", "r", encoding="utf-8") as file: # leer y escribir r+
+    tweets = json.loads(file.read());
+    tweet = {"myTweet": tweetItem for tweetItem in tweets if tweetItem["tweet_id"] == tweet_id};
+    return tweet["myTweet"];
 
 ### Delete One tweet
 @app.delete(
   path="/tweets/{tweet_id}/delete",
-  response_model=Tweet,
+  response_model=List[Tweet],
   status_code=status.HTTP_200_OK,
   summary="Delete ONE Tweet",
-  description="Delete one tweet",
   tags=["Tweets"]
 )
-def delete_one_tweet():
-  pass;
+def delete_one_tweet(
+  tweet_id: str = Path(
+    ...,
+    example="3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  )
+):
+  """
+    # Delete One tweet
+    Delete One tweet by id
+
+    ## Parameters:
+      - **tweet_id**: UUID
+
+    Returns a json with the list of Tweets existents.
+  """
+  
+  with open("tweets.json", "r+", encoding="utf-8") as file: # leer y escribir r+
+    tweets = json.loads(file.read());
+    tweets_enum = enumerate(tweets);
+
+    for tweetItemFor in tweets:
+      tweet_dict = dict(tweetItemFor); # lo pone fastapi para transformar json a dict PERO ATRIBUTOS MANUALMENTE
+      tweet_dict["tweet_id"] = str(tweet_dict["tweet_id"]);
+      tweet_dict["created_at"] = str(tweet_dict["created_at"]);
+      tweet_dict["updated_at"] = str(tweet_dict["updated_at"]);
+      tweet_dict["by"]["user_id"] = str(tweet_dict["by"]["user_id"]);
+      tweet_dict["by"]["birth_date"] = str(tweet_dict["by"]["birth_date"]);
+
+    tweet = {"myTweet": tweetIndex for (tweetIndex, tweetItem) in tweets_enum if tweetItem["tweet_id"] == tweet_id};
+
+    tweets.pop(tweet["myTweet"]);
+    print(tweets);
+    file.seek(0); # moverme al primer byte del archivo (ESCRIBIR DESDE CERO en el file)
+    file.write(json.dumps(tweets)); # Convierto a json el dict
+    return tweets;
 
 ### Update One tweet
 @app.put(
