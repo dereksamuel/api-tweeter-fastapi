@@ -46,14 +46,9 @@ class Tweet(BaseModel):
 
 # Path operations
 
-@app.get("/")
-def home():
-  return {
-    "hola": "Mundo"
-  };
-
 ## Users
 
+### Register a user
 @app.post(
   path="/signup",
   response_model=User,
@@ -65,6 +60,7 @@ def home():
 def signup():
   pass;
 
+### Login a user
 @app.post(
   path="/login",
   response_model=User,
@@ -76,6 +72,7 @@ def signup():
 def login():
   pass;
 
+### Get All users
 @app.get(
   path="/users",
   response_model=List[User],
@@ -87,6 +84,7 @@ def login():
 def get_all_users():
   pass;
 
+### Get One user
 @app.get(
   path="/users/{user_id}",
   response_model=User,
@@ -98,6 +96,7 @@ def get_all_users():
 def get_one_user():
   pass;
 
+### Update One user
 @app.put(
   path="/users/{user_id}",
   response_model=User,
@@ -109,6 +108,7 @@ def get_one_user():
 def update_one_user():
   pass;
 
+### Delete One user
 @app.delete(
   path="/users/{user_id}",
   response_model=User,
@@ -119,4 +119,65 @@ def update_one_user():
 )
 def delete_one_user():
   pass;
+
 ## Tweets
+
+### Get All tweets
+@app.get(
+  path="/",
+  response_model=List[Tweet],
+  status_code=status.HTTP_200_OK,
+  summary="Get ALL Tweets",
+  description="Get all tweets",
+  tags=["Tweets"]
+)
+def home():
+  pass;
+
+### Post a user
+@app.post(
+  path="/post",
+  response_model=Tweet,
+  status_code=status.HTTP_201_CREATED,
+  summary="Post ONE Tweet",
+  description="Post ONE tweet",
+  tags=["Tweets"]
+)
+def post():
+  pass;
+
+### Get One tweet
+@app.get(
+  path="/tweets/{tweet_id}",
+  response_model=Tweet,
+  status_code=status.HTTP_200_OK,
+  summary="Get ONE Tweet",
+  description="Get one tweet",
+  tags=["Tweets"]
+)
+def get_one_tweet():
+  pass;
+
+### Delete One tweet
+@app.delete(
+  path="/tweets/{tweet_id}/delete",
+  response_model=Tweet,
+  status_code=status.HTTP_200_OK,
+  summary="Delete ONE Tweet",
+  description="Delete one tweet",
+  tags=["Tweets"]
+)
+def delete_one_tweet():
+  pass;
+
+### Update One tweet
+@app.put(
+  path="/tweets/{tweet_id}/update",
+  response_model=Tweet,
+  status_code=status.HTTP_200_OK,
+  summary="Update ONE Tweet",
+  description="Update one tweet",
+  tags=["Tweets"]
+)
+def update_one_tweet():
+  pass;
