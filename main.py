@@ -2,12 +2,13 @@
 from typing import Optional, List;
 from uuid import UUID;
 from datetime import date, datetime;
+import json;
 
 #Pydantic
 from pydantic import BaseModel, EmailStr, Field;
 
 # FastAPI
-from fastapi import FastAPI, status;
+from fastapi import FastAPI, status, Body;
 
 app = FastAPI();
 
@@ -60,10 +61,9 @@ class Tweet(BaseModel):
   response_model=User,
   status_code=status.HTTP_201_CREATED,
   summary="SignUp User",
-  description="For register a user",
   tags=["Users"]
 )
-def signup():
+def signup(user: UserRegister = Body(...)):
   """
     # SignUp
     This path operation REGISTER a user in the app.
@@ -78,7 +78,18 @@ def signup():
       - full_name: str
       - birth_date: str
   """
-  pass;
+  
+  with open("users.json", "r+", encoding="utf-8") as file: # leer y escribir r+
+    users = json.loads(file.read());
+
+    user_dict = user.dict(); # lo pone fastapi para transformar json a dict PERO ATRIBUTOS MANUALMENTE
+    user_dict["user_id"] = str(user_dict["user_id"]);
+    user_dict["birth_date"] = str(user_dict["birth_date"]);
+
+    users.append(user_dict);
+    file.seek(0); # moverme al primer byte del archivo (ESCRIBIR DESDE CERO en el file)
+    file.write(json.dumps(users)); # Convierto a json el dict
+    return user;
 
 ### Login a user
 @app.post(
